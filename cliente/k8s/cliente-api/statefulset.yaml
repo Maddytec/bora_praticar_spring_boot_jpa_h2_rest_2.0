@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql-cliente
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql-cliente
+  serviceName: "mysql-cliente"
+  template:
+    metadata:
+      labels:
+        app: mysql-cliente
+    spec:
+      containers:
+        - image: mysql
+          name: mysql-cliente
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: password
+            - name: MYSQL_DATABASE
+              value: clientedb
+          ports:
+            - containerPort: 3306
+              name: mysql-cliente
+          volumeMounts:
+            - name: db
+              mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+    - metadata:
+        name: db
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: local-path
+        resources:
+          requests:
+            storage: 1Gi

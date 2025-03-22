@@ -1,17 +1,26 @@
+server:
+  port : 80
+
 spring:
+  application:
+    name: api-cliente
 
   datasource:
-    url: jdbc:h2:mem:testdb
-    username: sa
-    password:
-    driverClassName: org.h2.Driver
+  #  driver_class_name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MYSQL_HOST_DATABASE}:${MYSQL_PORT_DATABASE}/${MYSQL_DATABASE}?createDatabaseIfNotExist=true
+    username: ${MYSQL_USER}
+    password: ${MYSQL_ROOT_PASSWORD}
 
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
-    properties.hibernate.show_sql: true
-    properties.hibernate.format_sql: true
+    hibernate.dialect: org.hibernate.dialect.MySQLDialect
+    hibernate.ddl-auto: update
+    hibernate:
+      jdbc: time_zone = TimeZone
+    show-sql: true
+    format_sql: true
 
-  h2:
-    console:
-      enabled: true
-      path: /h2
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus
